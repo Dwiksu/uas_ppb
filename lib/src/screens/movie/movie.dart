@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:uas_ril/src/api/tmdb_api_service.dart';
 import 'package:uas_ril/src/providers/auth_provider.dart';
 import 'package:uas_ril/src/providers/movie_provider.dart';
@@ -18,16 +19,6 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Film Populer'),
         backgroundColor: Colors.deepPurple,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fungsi pencarian belum ada.')),
-              );
-            },
-          ),
-        ],
       ),
       // Body tidak lagi menggunakan Column, langsung SingleChildScrollView
       body: moviesAsyncValue.when(
@@ -75,47 +66,53 @@ class HomePage extends ConsumerWidget {
                         final itemWidth = (screenWidth - 12 * 3) / 2;
                         return SizedBox(
                           width: itemWidth,
-                          child: Column(
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 2 / 3,
-                                child: Card(
-                                  clipBehavior: Clip.antiAlias,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 4,
-                                  child: CachedNetworkImage(
-                                    imageUrl: TmdbApiService.getPosterUrl(
-                                      movie.posterPath,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Gunakan push untuk navigasi ke detail
+                              context.push('/home/movie/${movie.id}');
+                            },
+                            child: Column(
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 2 / 3,
+                                  child: Card(
+                                    clipBehavior: Clip.antiAlias,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
-                                    placeholder:
-                                        (context, url) => const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                    errorWidget:
-                                        (context, url, error) => const Center(
-                                          child: Icon(
-                                            Icons.movie_creation_outlined,
-                                            color: Colors.grey,
+                                    elevation: 4,
+                                    child: CachedNetworkImage(
+                                      imageUrl: TmdbApiService.getPosterUrl(
+                                        movie.posterPath,
+                                      ),
+                                      placeholder:
+                                          (context, url) => const Center(
+                                            child: CircularProgressIndicator(),
                                           ),
-                                        ),
-                                    fit: BoxFit.cover,
+                                      errorWidget:
+                                          (context, url, error) => const Center(
+                                            child: Icon(
+                                              Icons.movie_creation_outlined,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 8.0),
-                              Text(
-                                movie.title,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                const SizedBox(height: 8.0),
+                                Text(
+                                  movie.title,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),

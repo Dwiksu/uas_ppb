@@ -111,7 +111,6 @@ class SignupScreen extends ConsumerWidget {
                             ? null
                             : () => controller.submitRegister(
                               context,
-                              ref,
                               formKey,
                               usernameCtrl.text,
                               passwordCtrl.text,

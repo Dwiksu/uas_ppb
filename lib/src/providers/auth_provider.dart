@@ -8,11 +8,16 @@ import 'package:uas_ril/src/data/models/user.dart';
 import 'package:uas_ril/src/providers/loading_provider.dart';
 import 'package:uas_ril/src/utils/app_router.dart';
 
+final currentUserProvider = StateProvider<User?>((ref) => null);
+
 final authNotifierProvider = ChangeNotifierProvider<AuthNotifier>(
-  (ref) => AuthNotifier(),
+  (ref) => AuthNotifier(ref),
 );
 
 class AuthNotifier extends ChangeNotifier {
+  final Ref _ref; // Tambahkan Ref
+  AuthNotifier(this._ref); // Modifikasi constructor
+
   bool _loggedIn = false;
   bool get isLoggedIn => _loggedIn;
 
@@ -36,7 +41,6 @@ class AuthNotifier extends ChangeNotifier {
 
   Future<void> submitRegister(
     BuildContext context,
-    WidgetRef ref,
     GlobalKey<FormState> formKey,
     String username,
     String password,
@@ -44,7 +48,7 @@ class AuthNotifier extends ChangeNotifier {
   ) async {
     if (!validateForm(formKey)) return;
 
-    ref.read(loadingProvider.notifier).state = true;
+    _ref.read(loadingProvider.notifier).state = true;
     try {
       if (!await _isUsernameAvailable(username)) {
         _showError('Username sudah digunakan');
@@ -66,44 +70,43 @@ class AuthNotifier extends ChangeNotifier {
       await Future.delayed(
         Duration(milliseconds: 100),
       ); // Ensures snackbar shows
-      ref.read(loadingProvider.notifier).state = false;
+      _ref.read(loadingProvider.notifier).state = false;
     }
   }
 
   Future<void> login(
     BuildContext context,
-    WidgetRef ref,
     GlobalKey<FormState> formKey,
     String username,
     String password,
   ) async {
     if (!validateForm(formKey)) return;
 
-    ref.read(loadingProvider.notifier).state = true;
+    _ref.read(loadingProvider.notifier).state = true;
     try {
       final user = await DbHelper.getUserByUsername(username);
       if (user == null || !Crypt(user.password).match(password)) {
         _showError("Username atau Password salah");
-        await Future.delayed(
-          Duration(milliseconds: 100),
-        ); // Allow snackbar to show
+        await Future.delayed(const Duration(milliseconds: 100));
         return;
       }
 
+      // ==== SIMPAN USER YANG LOGIN KE PROVIDER ====
+      _ref.read(currentUserProvider.notifier).state = user;
       _loggedIn = true;
       notifyListeners();
     } catch (e) {
       debugPrint('Login Error: $e');
       _showError('Terjadi kesalahan saat login');
     } finally {
-      await Future.delayed(
-        Duration(milliseconds: 100),
-      ); // Snackbar grace period
-      ref.read(loadingProvider.notifier).state = false;
+      await Future.delayed(const Duration(milliseconds: 100));
+      _ref.read(loadingProvider.notifier).state = false;
     }
   }
 
   void logout() {
+    // ==== HAPUS DATA USER SAAT LOGOUT ====
+    _ref.read(currentUserProvider.notifier).state = null;
     _loggedIn = false;
     notifyListeners();
   }

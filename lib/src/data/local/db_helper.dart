@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-
 import 'package:uas_ril/src/data/models/user.dart';
 
 class DbHelper {
@@ -20,25 +19,25 @@ class DbHelper {
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
-  // Membuat semua tabel di sini
   static Future _onCreate(Database db, int version) async {
+    // Tabel pengguna tidak berubah
     await db.execute('''
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL,
+        username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL
       )
     ''');
-  }
 
-  // await db.execute('''
-  //   CREATE TABLE watchlist (
-  //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-  //     userId INTEGER,
-  //     title TEXT NOT NULL,
-  //     FOREIGN KEY (userId) REFERENCES users (id)
-  //   )
-  // ''');
+    await db.execute('''
+      CREATE TABLE watchlist (
+        userId INTEGER NOT NULL,
+        movieId INTEGER NOT NULL,
+        FOREIGN KEY (userId) REFERENCES users (id) ON DELETE CASCADE,
+        PRIMARY KEY (userId, movieId)
+      )
+    ''');
+  }
 
   // ~~~~~~ USER METHOD ~~~~~~
   static Future<void> insertUser(User user) async {
@@ -48,13 +47,6 @@ class DbHelper {
       user.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    debugPrint("Berhasil Menambahkan User");
-  }
-
-  static Future<User> getUserById(int id) async {
-    final db = await database;
-    final result = await db.query('users', where: 'id = ?', whereArgs: [id]);
-    return User.fromJson(result.first);
   }
 
   static Future<User?> getUserByUsername(String username) async {
@@ -64,15 +56,9 @@ class DbHelper {
       where: 'username = ?',
       whereArgs: [username],
     );
-
-    if (result.isNotEmpty) {
-      return User.fromJson(result.first);
-    } else {
-      return null;
-    }
+    return result.isNotEmpty ? User.fromJson(result.first) : null;
   }
 
-  // Check Username
   static Future<int> checkUser(String username) async {
     final db = await database;
     final result = await db.query(
@@ -83,13 +69,38 @@ class DbHelper {
     return result.length;
   }
 
-  static Future<void> updateUser(User user) async {
+  // ==== METHOD WATCHLIST ====
+
+  // Menambahkan film ke watchlist pengguna
+  static Future<void> addMovieToWatchlist(int userId, int movieId) async {
     final db = await database;
-    await db.update(
-      'users',
-      user.toJson(),
-      where: 'id = ?',
-      whereArgs: [user.id],
+    await db.insert(
+      'watchlist',
+      {'userId': userId, 'movieId': movieId},
+      conflictAlgorithm: ConflictAlgorithm.ignore, // Abaikan jika sudah ada
     );
+  }
+
+  // Menghapus film dari watchlist pengguna
+  static Future<void> removeMovieFromWatchlist(int userId, int movieId) async {
+    final db = await database;
+    await db.delete(
+      'watchlist',
+      where: 'userId = ? AND movieId = ?',
+      whereArgs: [userId, movieId],
+    );
+  }
+
+  // Mendapatkan semua ID film dari watchlist seorang pengguna
+  static Future<List<int>> getWatchlist(int userId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'watchlist',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+    return List.generate(maps.length, (i) {
+      return maps[i]['movieId'] as int;
+    });
   }
 }

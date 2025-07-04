@@ -85,7 +85,6 @@ class LoginScreen extends ConsumerWidget {
                     ? null
                     : () => controller.login(
                       context,
-                      ref,
                       formKey,
                       usernameCtrl.text,
                       passwordCtrl.text,
