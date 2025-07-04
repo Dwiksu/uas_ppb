@@ -27,12 +27,6 @@ class HomePage extends ConsumerWidget {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () {
-              authNotifier.logout();
-            },
-          ),
         ],
       ),
       // Body tidak lagi menggunakan Column, langsung SingleChildScrollView
@@ -65,9 +59,13 @@ class HomePage extends ConsumerWidget {
           // Gunakan CustomScrollView untuk menggabungkan konten dan paginasi
           return SingleChildScrollView(
             // Padding bawah untuk memberi ruang dari tepi layar
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 100),
             child: Column(
               children: [
+                Text(
+                  "Popular Movies",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
                 Wrap(
                   spacing: 12.0,
                   runSpacing: 16.0,
