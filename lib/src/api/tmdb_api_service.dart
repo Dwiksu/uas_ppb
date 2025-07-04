@@ -1,5 +1,7 @@
 import 'dart:convert'; // Untuk mengelola JSON
 import 'package:http/http.dart' as http; // Untuk HTTP requests
+import 'package:uas_ril/src/data/models/actor.dart';
+import 'package:uas_ril/src/data/models/cast.dart';
 import '../data/models/movie.dart'; // Import model Movie yang akan kita buat nanti
 
 // Pastikan untuk mengganti ini dengan API Key TMDb kamu yang sebenarnya!
@@ -78,5 +80,96 @@ class TmdbApiService {
     }
     // Ukuran w500 adalah ukuran yang umum digunakan untuk poster
     return 'https://image.tmdb.org/t/p/w500$posterPath';
+  }
+
+  // Method untuk mendapatkan daftar pemeran dari sebuah film
+  Future<List<Cast>> getMovieCredits(int movieId) async {
+    final url = Uri.parse(
+      '$_kBaseUrl/movie/$movieId/credits?api_key=$_kApiKey',
+    );
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['cast'];
+        return results.map((json) => Cast.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load movie credits');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to TMDb API: $e');
+    }
+  }
+
+  // Method untuk mendapatkan detail seorang aktor
+  Future<Actor> getActorDetails(int personId) async {
+    final url = Uri.parse('$_kBaseUrl/person/$personId?api_key=$_kApiKey');
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        return Actor.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Failed to load actor details');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to TMDb API: $e');
+    }
+  }
+
+  // Method untuk mendapatkan daftar film dari seorang aktor (filmografi)
+  Future<List<Movie>> getActorMovieCredits(int personId) async {
+    final url = Uri.parse(
+      '$_kBaseUrl/person/$personId/movie_credits?api_key=$_kApiKey',
+    );
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['cast'];
+        return results.map((json) => Movie.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load actor movie credits');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to TMDb API: $e');
+    }
+  }
+
+  // Method untuk mendapatkan film yang direkomendasikan
+  Future<List<Movie>> getRecommendedMovies(int movieId) async {
+    final url = Uri.parse(
+      '$_kBaseUrl/movie/$movieId/recommendations?api_key=$_kApiKey',
+    );
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['results'];
+        return results.map((json) => Movie.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load recommended movies');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to TMDb API: $e');
+    }
+  }
+
+  // Method untuk mendapatkan film yang serupa
+  Future<List<Movie>> getSimilarMovies(int movieId) async {
+    final url = Uri.parse(
+      '$_kBaseUrl/movie/$movieId/similar?api_key=$_kApiKey',
+    );
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final List<dynamic> results = data['results'];
+        return results.map((json) => Movie.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load similar movies');
+      }
+    } catch (e) {
+      throw Exception('Failed to connect to TMDb API: $e');
+    }
   }
 }

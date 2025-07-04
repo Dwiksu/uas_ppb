@@ -61,7 +61,7 @@ class SearchScreen extends ConsumerWidget {
           return ListTile(
             onTap: () {
               // Gunakan push untuk navigasi ke detail
-              context.push('/search/movie/${movie.id}');
+              context.push('/home/movie/${movie.id}');
             },
             leading: SizedBox(
               width: 50,

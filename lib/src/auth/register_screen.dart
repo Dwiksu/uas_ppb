@@ -60,7 +60,7 @@ class SignupScreen extends ConsumerWidget {
                         filled: true,
                         prefixIcon: const Icon(Icons.person),
                       ),
-                      validator: _requiredValidator,
+                      validator: _usernameValidator,
                     ),
 
                     const SizedBox(height: 15),
@@ -155,8 +155,18 @@ class SignupScreen extends ConsumerWidget {
     );
   }
 
-  String? _requiredValidator(String? val) =>
-      (val == null || val.isEmpty) ? 'Required' : null;
+  String? _usernameValidator(String? val) {
+    if (val == null || val.isEmpty) {
+      return 'Username required';
+    }
+    if (!RegExp(r'^[a-zA-Z0-9_.]+$').hasMatch(val)) {
+      return 'Username can only contain letters, numbers, dots and underscores';
+    }
+    if (val.length < 3 || val.length > 20) {
+      return 'Username must be between 3 and 20 characters';
+    }
+    return null;
+  }
 
   String? _passwordValidator(String? val) {
     if (val == null || val.length < 6) return 'Min 6 characters';

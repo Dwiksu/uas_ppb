@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 
 class ScaffoldWithBottomNavBar extends StatefulWidget {
   // ... (kode lainnya tetap sama)
-  const ScaffoldWithBottomNavBar({Key? key, required this.child})
-    : super(key: key);
+  const ScaffoldWithBottomNavBar({super.key, required this.child});
 
   final Widget child;
 
@@ -65,7 +64,7 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
       // ... (style container tidak berubah)
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.95),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.95),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

@@ -12,6 +12,7 @@ import 'package:uas_ril/src/screens/user/user_screen.dart';
 import 'package:uas_ril/src/screens/watchlist/watchlist_screen.dart';
 import 'package:uas_ril/src/screens/search/search_screen.dart';
 import 'package:uas_ril/src/screens/movie/movie_detail_screen.dart';
+import 'package:uas_ril/src/screens/actor/actor_detail_screen.dart';
 
 // Gunakan GlobalKey untuk router utama
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -64,12 +65,21 @@ final appRouter = Provider<GoRouter>((ref) {
                         const NoTransitionPage(child: HomePage()),
                 routes: [
                   GoRoute(
-                    path: 'movie/:movieId',
+                    path: '/movie/:movieId',
                     builder: (context, state) {
                       final movieId = int.parse(
                         state.pathParameters['movieId']!,
                       );
                       return MovieDetailScreen(movieId: movieId);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'actor/:personId',
+                    builder: (context, state) {
+                      final personId = int.parse(
+                        state.pathParameters['personId']!,
+                      );
+                      return ActorDetailScreen(personId: personId);
                     },
                   ),
                 ],
