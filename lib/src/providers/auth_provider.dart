@@ -26,7 +26,7 @@ class AuthNotifier extends ChangeNotifier {
   }
 
   void _showError(String message) {
-    final ctx = navigatorKey.currentContext;
+    final ctx = rootNavigatorKey.currentContext;
     if (ctx != null) {
       ScaffoldMessenger.of(ctx).showSnackBar(
         SnackBar(content: Text(message), backgroundColor: Colors.red),
