@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uas_ril/src/api/tmdb_api_service.dart';
-import 'package:uas_ril/src/providers/auth_provider.dart';
 import 'package:uas_ril/src/providers/movie_provider.dart';
 
 class HomePage extends ConsumerWidget {
@@ -13,7 +12,6 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final moviesAsyncValue = ref.watch(pagedMoviesProvider);
     final currentPage = ref.watch(currentPageProvider);
-    final authNotifier = ref.watch(authNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
