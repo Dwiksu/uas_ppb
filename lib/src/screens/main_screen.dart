@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ScaffoldWithBottomNavBar extends StatefulWidget {
-  // ... (kode lainnya tetap sama)
   const ScaffoldWithBottomNavBar({super.key, required this.child});
 
   final Widget child;
@@ -18,7 +17,6 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
     final String location = GoRouterState.of(context).matchedLocation;
     if (location.startsWith('/home')) return 0;
     if (location.startsWith('/watchlist')) return 1;
-    // Tambahkan kondisi untuk search
     if (location.startsWith('/search')) return 2;
     if (location.startsWith('/user')) return 3;
     return 0;
@@ -32,7 +30,6 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
       case 1:
         context.go('/watchlist');
         break;
-      // Tambahkan case untuk search
       case 2:
         context.go('/search');
         break;
@@ -44,16 +41,24 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Location ${GoRouterState.of(context).fullPath}");
+    final hideNavBarRoutes = ['/home/actor', '/home/movie'];
+
+    final bool hideNavBar = hideNavBarRoutes.any(
+      (r) => GoRouterState.of(context).fullPath!.startsWith(r),
+    );
+
     return Scaffold(
       body: Stack(
         children: [
           widget.child,
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildFloatingNavBar(context),
-          ),
+          if (!hideNavBar)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: _buildFloatingNavBar(context),
+            ),
         ],
       ),
     );
@@ -64,7 +69,9 @@ class _ScaffoldWithBottomNavBarState extends State<ScaffoldWithBottomNavBar> {
       // ... (style container tidak berubah)
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.95),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withOpacity(0.95),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
