@@ -1,5 +1,3 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'src/utils/app_router.dart';
@@ -15,18 +13,18 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouter);
     return MaterialApp.router(
-      // Terapkan tema terang
+      // Menerapkan tema terang
       theme: ThemeData.light(useMaterial3: true).copyWith(
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          // Atur background dan elevation di sini
+          // Atur background dan elevation
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
       ),
-      // Terapkan tema gelap
+      // Menerapkan tema gelap
       darkTheme: ThemeData.dark(useMaterial3: true).copyWith(
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          // Atur background dan elevation di sini
+          // Atur background dan elevation
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),

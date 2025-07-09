@@ -110,4 +110,56 @@ class AuthNotifier extends ChangeNotifier {
     _loggedIn = false;
     notifyListeners();
   }
+
+  Future<void> verifyUsernameForReset(
+    BuildContext context,
+    String username,
+  ) async {
+    _ref.read(loadingProvider.notifier).state = true;
+    try {
+      final userExists = await DbHelper.checkUser(username) > 0;
+      if (userExists) {
+        // Jika username ada, pindah ke halaman reset password
+        GoRouter.of(context).push('/reset-password', extra: username);
+      } else {
+        _showError('Username tidak ditemukan.');
+      }
+    } catch (e) {
+      _showError('Terjadi kesalahan.');
+    } finally {
+      _ref.read(loadingProvider.notifier).state = false;
+    }
+  }
+
+  Future<void> resetPassword(
+    BuildContext context,
+    String username,
+    String newPassword,
+  ) async {
+    _ref.read(loadingProvider.notifier).state = true;
+    try {
+      final hashedPassword = Crypt.sha256(newPassword).toString();
+      final updatedRows = await DbHelper.updatePassword(
+        username,
+        hashedPassword,
+      );
+
+      if (updatedRows > 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Password berhasil diubah. Silakan login kembali.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        // Kembali ke halaman login
+        GoRouter.of(context).go('/login');
+      } else {
+        _showError('Gagal memperbarui password.');
+      }
+    } catch (e) {
+      _showError('Terjadi kesalahan.');
+    } finally {
+      _ref.read(loadingProvider.notifier).state = false;
+    }
+  }
 }

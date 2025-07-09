@@ -9,6 +9,39 @@ class SignupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const SizedBox(height: 60.0),
+              _header(context),
+              const SizedBox(height: 40),
+              _inputField(context, ref),
+              const SizedBox(height: 20),
+              _signin(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _header(context) {
+    return const Column(
+      children: [
+        Text(
+          "Sign Up",
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+        ),
+        Text("Create new account"),
+      ],
+    );
+  }
+
+  _inputField(context, WidgetRef ref) {
     final controller = ref.watch(authNotifierProvider);
 
     final formKey = GlobalKey<FormState>();
@@ -17,141 +50,99 @@ class SignupScreen extends ConsumerWidget {
     final passwordCtrl = TextEditingController();
     final confirmCtrl = TextEditingController();
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          height: MediaQuery.of(context).size.height - 50,
-          width: double.infinity,
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    const SizedBox(height: 60.0),
-
-                    const Text(
-                      "Sign up",
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Text(
-                      "Create your account",
-                      style: TextStyle(fontSize: 15, color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    TextFormField(
-                      controller: usernameCtrl,
-                      decoration: InputDecoration(
-                        hintText: "Username",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        prefixIcon: const Icon(Icons.person),
-                      ),
-                      validator: _usernameValidator,
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    TextFormField(
-                      controller: passwordCtrl,
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        prefixIcon: const Icon(Icons.password),
-                      ),
-                      obscureText: true,
-                      validator: _passwordValidator,
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    TextFormField(
-                      controller: confirmCtrl,
-                      decoration: InputDecoration(
-                        hintText: "Confirm Password",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        prefixIcon: const Icon(Icons.password),
-                      ),
-                      obscureText: true,
-                      validator:
-                          (value) =>
-                              value != passwordCtrl.text
-                                  ? "Passwords don't match"
-                                  : null,
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.only(top: 3, left: 3),
-
-                  child: ElevatedButton(
-                    onPressed:
-                        ref.watch(loadingProvider)
-                            ? null
-                            : () => controller.submitRegister(
-                              context,
-                              formKey,
-                              usernameCtrl.text,
-                              passwordCtrl.text,
-                              confirmCtrl.text,
-                            ),
-                    style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                    child:
-                        ref.watch(loadingProvider)
-                            ? const CircularProgressIndicator()
-                            : const Text(
-                              "Sign up",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                  ),
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    const Text("Already have an account?"),
-                    TextButton(
-                      onPressed: () => context.go('/login'),
-                      child: const Text(
-                        "Login",
-                        style: TextStyle(color: Colors.deepPurple),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextFormField(
+            controller: usernameCtrl,
+            decoration: InputDecoration(
+              hintText: "Username",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.person),
             ),
+            validator: _usernameValidator,
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: passwordCtrl,
+            decoration: InputDecoration(
+              hintText: "Password",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.password),
+            ),
+            obscureText: true,
+            validator: _passwordValidator,
+          ),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: confirmCtrl,
+            decoration: InputDecoration(
+              hintText: "Confirm Password",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              prefixIcon: const Icon(Icons.password),
+            ),
+            obscureText: true,
+            validator:
+                (value) =>
+                    value != passwordCtrl.text ? "Passwords don't match" : null,
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed:
+                ref.watch(loadingProvider)
+                    ? null
+                    : () => controller.submitRegister(
+                      context,
+                      formKey,
+                      usernameCtrl.text,
+                      passwordCtrl.text,
+                      confirmCtrl.text,
+                    ),
+            style: ElevatedButton.styleFrom(
+              shape: const StadiumBorder(),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: Colors.deepPurple,
+            ),
+            child:
+                ref.watch(loadingProvider)
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                      "Sign Up",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
+                    ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _signin(context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Already have an account?"),
+        TextButton(
+          onPressed: () => GoRouter.of(context).go('/login'),
+          child: const Text(
+            "Sign In",
+            style: TextStyle(color: Colors.deepPurple),
           ),
         ),
-      ),
+      ],
     );
   }
 

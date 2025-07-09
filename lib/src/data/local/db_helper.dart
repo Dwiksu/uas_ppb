@@ -68,6 +68,16 @@ class DbHelper {
     return result.length;
   }
 
+  static Future<int> updatePassword(String username, String newPassword) async {
+    final db = await database;
+    return await db.update(
+      'users',
+      {'password': newPassword},
+      where: 'username = ?',
+      whereArgs: [username],
+    );
+  }
+
   // ==== METHOD WATCHLIST ====
 
   // Menambahkan film ke watchlist pengguna

@@ -10,16 +10,22 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _header(context),
-            _inputField(context, ref),
-            _forgotPassword(context),
-            _signup(context),
-          ],
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              const SizedBox(height: 60.0),
+              _header(context),
+              const SizedBox(height: 40),
+              _inputField(context, ref),
+              const SizedBox(height: 10),
+              _forgotPassword(context),
+              const SizedBox(height: 20),
+              _signup(context),
+            ],
+          ),
         ),
       ),
     );
@@ -98,21 +104,11 @@ class LoginScreen extends ConsumerWidget {
                 ref.watch(loadingProvider)
                     ? const CircularProgressIndicator()
                     : const Text(
-                      "Login",
+                      "Sign In",
                       style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
           ),
         ],
-      ),
-    );
-  }
-
-  _forgotPassword(context) {
-    return TextButton(
-      onPressed: () {},
-      child: const Text(
-        "Forgot password?",
-        style: TextStyle(color: Colors.deepPurple),
       ),
     );
   }
@@ -139,5 +135,18 @@ class LoginScreen extends ConsumerWidget {
   String? _passwordValidator(String? val) {
     if (val == null || val.length < 6) return 'Min 6 characters';
     return null;
+  }
+
+  _forgotPassword(context) {
+    return TextButton(
+      onPressed: () {
+        // Navigasi ke halaman lupa password
+        GoRouter.of(context).push('/forgot-password');
+      },
+      child: const Text(
+        "Lupa password?",
+        style: TextStyle(color: Colors.deepPurple),
+      ),
+    );
   }
 }

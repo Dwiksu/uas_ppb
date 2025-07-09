@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uas_ril/src/auth/forgot_password_screen.dart';
 
 import 'package:uas_ril/src/auth/login_screen.dart';
 import 'package:uas_ril/src/auth/register_screen.dart';
+import 'package:uas_ril/src/auth/reset_password_screen.dart';
 import 'package:uas_ril/src/screens/movie/movie.dart';
 import 'package:uas_ril/src/providers/auth_provider.dart';
 // Import file baru
@@ -27,7 +29,9 @@ final appRouter = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final goingToLoginOrRegister =
           state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
+          state.matchedLocation == '/register' ||
+          state.matchedLocation == '/forgot-password' ||
+          state.matchedLocation == '/reset-password';
 
       // Jika belum login dan tidak sedang menuju halaman login/register, alihkan ke login
       if (!authNotifier.isLoggedIn && !goingToLoginOrRegister) {
@@ -47,6 +51,18 @@ final appRouter = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/register',
         builder: (context, state) => const SignupScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) {
+          // Ambil username yang dikirim dari halaman sebelumnya
+          final username = state.extra as String;
+          return ResetPasswordScreen(username: username);
+        },
       ),
 
       // Gunakan StatefulShellRoute untuk halaman dengan BottomNavBar
